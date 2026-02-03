@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Flag, Shield, Wrench, Settings, LayoutDashboard, Monitor, Swords, ShieldAlert } from 'lucide-react';
+import { Flag, Shield, Wrench, Settings, LayoutDashboard, Monitor, Swords, ShieldAlert, ChevronDown, ChevronRight } from 'lucide-react';
 import { ctfCategories } from '@/lib/categories';
 
 interface LayoutProps {
@@ -12,13 +12,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isAWD = location.pathname.startsWith('/awd');
+  
+  // State for expanded categories in CTF mode
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(ctfCategories.map(c => c.id));
 
-  // Define Navigation Items based on Mode
-  const ctfNavItems = ctfCategories.map(cat => ({
-    name: cat.name,
-    path: `/ctf/${cat.id}`,
-    icon: cat.icon
-  }));
+  const toggleCategory = (categoryId: string) => {
+    setExpandedCategories(prev => 
+      prev.includes(categoryId) 
+        ? prev.filter(id => id !== categoryId) 
+        : [...prev, categoryId]
+    );
+  };
 
   const awdNavItems = [
     { name: 'Dashboard', path: '/awd', icon: LayoutDashboard },
@@ -26,8 +30,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'Attack', path: '/awd/attack', icon: Swords },
     { name: 'Defense', path: '/awd/defense', icon: ShieldAlert },
   ];
-
-  const currentNavItems = isAWD ? awdNavItems : ctfNavItems;
 
   const commonItems = [
     { name: 'Tools', path: '/tools', icon: Wrench },
@@ -50,26 +52,82 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <h3 className="mb-2 px-4 text-xs font-semibold uppercase text-slate-400">
               {isAWD ? 'AWD Modules' : 'CTF Categories'}
             </h3>
-            <ul className="space-y-1">
-              {currentNavItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
-                return (
-                  <li key={item.name}>
-                    <Link
-                      to={item.path}
-                      className={cn(
-                        "flex items-center rounded-lg px-3 py-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900",
-                        isActive && "bg-slate-100 font-medium text-blue-600"
+            
+            {isAWD ? (
+              <ul className="space-y-1">
+                {awdNavItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
+                  return (
+                    <li key={item.name}>
+                      <Link
+                        to={item.path}
+                        className={cn(
+                          "flex items-center rounded-lg px-3 py-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900",
+                          isActive && "bg-slate-100 font-medium text-blue-600"
+                        )}
+                      >
+                        <Icon className="mr-3 h-5 w-5" />
+                        {item.name}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <ul className="space-y-1">
+                {ctfCategories.map((cat) => {
+                  const Icon = cat.icon;
+                  const isExpanded = expandedCategories.includes(cat.id);
+                  const isCurrentCategory = location.pathname.startsWith(`/ctf/${cat.id}`);
+
+                  return (
+                    <li key={cat.id} className="mb-1">
+                      <button
+                        onClick={() => toggleCategory(cat.id)}
+                        className={cn(
+                          "flex w-full items-center justify-between rounded-lg px-3 py-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900",
+                          isCurrentCategory && !isExpanded && "bg-slate-50 font-medium text-blue-600"
+                        )}
+                      >
+                        <div className="flex items-center">
+                          <Icon className="mr-3 h-5 w-5" />
+                          <span>{cat.name}</span>
+                        </div>
+                        {isExpanded ? (
+                          <ChevronDown className="h-4 w-4 text-slate-400" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 text-slate-400" />
+                        )}
+                      </button>
+
+                      {isExpanded && (
+                        <ul className="mt-1 space-y-1 pl-11">
+                          {cat.subCategories.map((sub) => {
+                            const subPath = `/ctf/${cat.id}/${sub.id}`;
+                            const isSubActive = location.pathname === subPath;
+                            
+                            return (
+                              <li key={sub.id}>
+                                <Link
+                                  to={subPath}
+                                  className={cn(
+                                    "block rounded-md px-3 py-1.5 text-sm transition-colors hover:bg-slate-100 hover:text-slate-900",
+                                    isSubActive ? "bg-slate-100 font-medium text-blue-600" : "text-slate-500"
+                                  )}
+                                >
+                                  {sub.name}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
                       )}
-                    >
-                      <Icon className="mr-3 h-5 w-5" />
-                      {item.name}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
 
           <div className="mt-6 px-3">
@@ -113,7 +171,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex items-center gap-4">
             {/* Mode Switcher */}
             <button
-              onClick={() => navigate(isAWD ? '/ctf/misc' : '/awd')}
+              onClick={() => navigate(isAWD ? '/ctf/misc/image-stego' : '/awd')}
               className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
             >
               {isAWD ? <Flag className="h-4 w-4" /> : <Shield className="h-4 w-4" />}

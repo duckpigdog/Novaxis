@@ -9,12 +9,13 @@ function App() {
     <Router>
       <Layout>
         <Routes>
-          <Route path="/" element={<Navigate to="/ctf/misc" replace />} />
-          <Route path="/ctf" element={<Navigate to="/ctf/misc" replace />} />
-          <Route path="/ctf/:category" element={<CTF />} />
+          <Route path="/" element={<Navigate to="/ctf/misc/image-stego" replace />} />
+          <Route path="/ctf" element={<Navigate to="/ctf/misc/image-stego" replace />} />
+          <Route path="/ctf/:category" element={<Navigate to="/ctf/misc/image-stego" replace />} />
+          <Route path="/ctf/:category/:subcategory" element={<CTF />} />
           <Route path="/awd" element={<AWD />} />
           {/* Add more routes as needed */}
-          <Route path="*" element={<Navigate to="/ctf/misc" replace />} />
+          <Route path="*" element={<Navigate to="/ctf/misc/image-stego" replace />} />
         </Routes>
       </Layout>
     </Router>
