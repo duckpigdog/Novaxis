@@ -8,8 +8,7 @@ export const ctfCategories = [
     subCategories: [
       { id: 'image-stego', name: '图片隐写' },
       { id: 'audio-stego', name: '音频隐写' },
-      { id: 'traffic-analysis', name: '流量分析' },
-      { id: 'forensics', name: '取证' }
+      { id: 'traffic-analysis', name: '流量分析' }
     ] 
   },
   { 

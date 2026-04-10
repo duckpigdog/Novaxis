@@ -1,3 +1,36 @@
+# Novaxis CTF Tools 集成系统
+
+本项目是一个基于 React + TypeScript + Vite 前端，以及 FastAPI 后端构建的集成化 CTF 工具系统。
+
+## 🚀 快速启动
+
+你需要分别启动前端服务和后端服务才能使整个系统正常工作。
+
+### 1. 启动后端服务 (FastAPI)
+后端服务用于处理复杂数据、生成音频流等任务。
+请新开一个终端，进入 `api` 目录，安装依赖并启动服务：
+
+```bash
+cd api
+pip install -r requirements.txt
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+*(后端服务将运行在 http://localhost:8000)*
+
+### 2. 启动前端服务 (Web端)
+前端服务用于提供用户界面。
+请新开一个终端，在项目根目录 (`d:\Novaxis`) 下安装依赖并启动服务：
+
+```bash
+npm install
+npm run dev
+```
+*(前端服务将运行在 http://localhost:5173)*
+
+---
+
+## 🛠 原有模板信息
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
